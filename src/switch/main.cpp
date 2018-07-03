@@ -99,11 +99,18 @@ static void desmume_cycle()
     {
     	libnx::touchPosition touch;
 		hidTouchRead(&touch, 0);
-
-		if(touch.px > 401 && touch.px < 882 && touch.py > 360 && touch.py < 720)
-		{
-
+		
+		if(UserConfiguration.portraitEnabled){
+			if(touch.px > 576 && touch.px < 1152 && touch.py > 0 && touch.py < 720){
+				NDS_setTouchPos((-touch.py + 720) / 2.875, (touch.px - 480) / 2.875);
+			}
+			//NDS_setTouchPos((-touch.py + 720) / 3, (touch.px - 480) / 3);//Working solution!		
+		}
+		
+		else if(!UserConfiguration.portraitEnabled){
+			if(touch.px > 401 && touch.px < 882 && touch.py > 360 && touch.py < 720){
 				NDS_setTouchPos((touch.px - 401) / 1.875,(touch.py - 360) / 1.875);
+			}
 		}
 	}
 
@@ -127,11 +134,12 @@ int main(int argc, char **argv)
 
 	char *rom_path = menu_FileBrowser();
 
-	libnx::gfxConfigureResolution(684, 384);
+	UserConfiguration.portraitEnabled ? libnx::gfxConfigureResolution(456, 257) : libnx::gfxConfigureResolution(684, 384);
 
 	/* the firmware settings */
 	struct NDS_fw_config_data fw_config;
-
+	
+	int xScale = 256;
 
 	/* default the firmware settings, they may get changed later */
 	NDS_FillDefaultFirmwareConfigData(&fw_config);
@@ -149,10 +157,14 @@ int main(int argc, char **argv)
 
 	execute = TRUE;
 	u32 width, height;
+	uint32_t keysDown;
 
 	while(1) 
 	{
-
+		keysDown = libnx::hidKeysDown(libnx::CONTROLLER_P1_AUTO);
+		if(keysDown & libnx::KEY_MINUS && libnx::KEY_PLUS)
+			break;
+		
 		for (int i = 0; i < UserConfiguration.frameSkip; i++)
 		{
 			NDS_SkipNextFrame();
@@ -164,16 +176,16 @@ int main(int argc, char **argv)
 		uint16_t * src = (uint16_t *)GPU->GetDisplayInfo().masterNativeBuffer;
 		uint32_t *framebuffer = (uint32_t*)libnx::gfxGetFramebuffer(&width, &height);
 
-		for(int x = 0; x < 256; x++){
+		for(int x = 0; x < xScale; x++){
     		for(int y = 0; y < (192 * 2); y++){
-    			uint32_t offset = libnx::gfxGetFramebufferDisplayOffset(214 + x, y);
-        		framebuffer[offset] = ABGR1555toRGBA8(src[( y * 256 ) + x]);
+    			uint32_t offset = UserConfiguration.portraitEnabled ? libnx::gfxGetFramebufferDisplayOffset(y, -x + (height / 2) + (xScale / 2) - 2.5) : libnx::gfxGetFramebufferDisplayOffset(214 + x, y);
+        		framebuffer[offset] = ABGR1555toRGBA8(src[((y * xScale) + x)]);
     		}
 		}
 
 		libnx::gfxFlushBuffers();
 		libnx::gfxSwapBuffers();
     }
-
+	libnx::gfxExit();
 	return 0;
 }
