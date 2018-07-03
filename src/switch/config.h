@@ -4,6 +4,7 @@
 struct TUserConfiguration 
 {
 	TUserConfiguration();
+	bool portraitEnabled;
 	bool soundEnabled;
 	bool jitEnabled;
 	bool threadedRendering;
