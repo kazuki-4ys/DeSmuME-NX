@@ -36,10 +36,10 @@ SOURCES		:=	src src/utils/decrypt src/addons src/utils src/utils/tinyxml src/uti
 DATA		:=	data
 INCLUDES	:=	src src/libretro-common/include
 EXEFS_SRC	:=	exefs_src
-
+ICON		:= Icon.jpg
 APP_TITLE   := DeSmuME-NX
-APP_AUTHOR  := MasterFeizz
-APP_VERSION := 0.0.1
+APP_AUTHOR  := MasterFeizz, Laprox
+APP_VERSION := 0.0.2
 
 #ROMFS	:=	romfs
 
@@ -58,7 +58,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=  -lm -lz -lnx -lstdc++
+LIBS	:=  -lnx -lm -lz -lstdc++
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
