@@ -28,6 +28,8 @@ char* menu_FileBrowser()
 		{
 			if(strcmp(extension, ".nds") == 0)
 				entries.push_back(entry->d_name);
+			//else if(strcmp(extension, ".srl") == 0)
+			//	entries.push_back(entry->d_name);
 		}
 	}
 
@@ -44,6 +46,9 @@ char* menu_FileBrowser()
 
 		if(keysDown & KEY_A)
 			break;
+		
+		if(keysDown & KEY_B)
+			UserConfiguration.portraitEnabled = !UserConfiguration.portraitEnabled;
 
 		if(keysDown & KEY_X)
 			UserConfiguration.soundEnabled = !UserConfiguration.soundEnabled;
@@ -88,13 +93,19 @@ char* menu_FileBrowser()
 		}
 
 		printf(CONSOLE_ESC(0m));
-
-		printf(CONSOLE_ESC(40;0H)"Press (X) to %s Sound\n", UserConfiguration.soundEnabled ? "disable" : " enable");
+		printf(CONSOLE_ESC(40;0H)"Press ");
+		printf(CONSOLE_BLUE"(X) ");
+		printf(CONSOLE_WHITE"to %s Sound\n", UserConfiguration.soundEnabled ? "disable" : " enable");
+		printf("Press ");
+		printf(CONSOLE_RED"(A) ");
+		printf(CONSOLE_WHITE"to Launch a Title\n");
+		printf("Press ");
+		printf(CONSOLE_YELLOW"(B) ");
+		printf(CONSOLE_WHITE"to %s Portrait Mode\n", UserConfiguration.portraitEnabled ? "disable" : "enable");
 		printf("Press Left or Right DPAD to change frameSkip\n");
 		printf("Current frameSkip value: %u\n", UserConfiguration.frameSkip);
 
 	}
-
 	printf(CONSOLE_ESC(0;0H));
 
 	char *filename = (char*)malloc(4096);
