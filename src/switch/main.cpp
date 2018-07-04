@@ -95,28 +95,24 @@ static void desmume_cycle()
 {
     process_ctrls_events(&keypad);
 
-    if(libnx::hidTouchCount())
-    {
-    	libnx::touchPosition touch;
-		hidTouchRead(&touch, 0);
+    libnx::touchPosition touch;
+	hidTouchRead(&touch, 0);
 		
-		if(UserConfiguration.portraitEnabled){
-			if(touch.px > 576 && touch.px < 1152 && touch.py > 0 && touch.py < 720){
-				NDS_setTouchPos((-touch.py + 720) / 2.875, (touch.px - 480) / 2.875);
-			}
+	if(UserConfiguration.portraitEnabled){
+		if(touch.px > 538.9473684210526 && touch.px < 1077.894736842105 && touch.py > 0 && touch.py < 720){
+			NDS_setTouchPos((-touch.py + 720) / 2.807017543859649, (touch.px - 540) / 2.8125);
+		} else {
+            NDS_releaseTouch();
+        }
 			//NDS_setTouchPos((-touch.py + 720) / 3, (touch.px - 480) / 3);//Working solution!		
-		}
-		
-		else if(!UserConfiguration.portraitEnabled){
-			if(touch.px > 401 && touch.px < 882 && touch.py > 360 && touch.py < 720){
-				NDS_setTouchPos((touch.px - 401) / 1.875,(touch.py - 360) / 1.875);
-			}
-		}
 	}
-
-	else if(libnx::hidKeysUp(libnx::CONTROLLER_P1_AUTO) & libnx::KEY_TOUCH)
-	{
-		NDS_releaseTouch();
+		
+	else if(!UserConfiguration.portraitEnabled){
+		if(touch.px > 401 && touch.px < 882 && touch.py > 360 && touch.py < 720){
+			NDS_setTouchPos((touch.px - 401) / 1.875,(touch.py - 360) / 1.875);
+		} else {
+            NDS_releaseTouch();
+        }
 	}
 
 	update_keypad(keypad);
@@ -134,7 +130,7 @@ int main(int argc, char **argv)
 
 	char *rom_path = menu_FileBrowser();
 
-	UserConfiguration.portraitEnabled ? libnx::gfxConfigureResolution(456, 257) : libnx::gfxConfigureResolution(684, 384);
+	UserConfiguration.portraitEnabled ? libnx::gfxConfigureResolution(456, 256) : libnx::gfxConfigureResolution(684, 384);
 
 	/* the firmware settings */
 	struct NDS_fw_config_data fw_config;
@@ -178,7 +174,7 @@ int main(int argc, char **argv)
 
 		for(int x = 0; x < xScale; x++){
     		for(int y = 0; y < (192 * 2); y++){
-    			uint32_t offset = UserConfiguration.portraitEnabled ? libnx::gfxGetFramebufferDisplayOffset(y, -x + (height / 2) + (xScale / 2) - 2.5) : libnx::gfxGetFramebufferDisplayOffset(214 + x, y);
+    			uint32_t offset = UserConfiguration.portraitEnabled ? libnx::gfxGetFramebufferDisplayOffset(y, -x + (height / 2) + (xScale / 2) - 2) : libnx::gfxGetFramebufferDisplayOffset(214 + x, y);
         		framebuffer[offset] = ABGR1555toRGBA8(src[((y * xScale) + x)]);
     		}
 		}
