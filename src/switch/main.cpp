@@ -104,7 +104,7 @@ static void desmume_cycle()
 		} else {
             NDS_releaseTouch();
         }
-			//NDS_setTouchPos((-touch.py + 720) / 3, (touch.px - 480) / 3);//Working solution!		
+			//NDS_setTouchPos((-touch.py + 720) / 2.807017543859649, (touch.px - 540) / 2.8125);//Working solution!		
 	}
 		
 	else if(!UserConfiguration.portraitEnabled){
@@ -125,10 +125,10 @@ static void desmume_cycle()
 
 int main(int argc, char **argv)
 {
+	char *rom_path = menu_FileBrowser();
+	
 	libnx::gfxInitDefault();
 	libnx::consoleInit(NULL);
-
-	char *rom_path = menu_FileBrowser();
 
 	UserConfiguration.portraitEnabled ? libnx::gfxConfigureResolution(456, 256) : libnx::gfxConfigureResolution(684, 384);
 
