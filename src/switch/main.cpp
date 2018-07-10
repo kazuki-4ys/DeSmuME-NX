@@ -126,6 +126,10 @@ static void desmume_cycle()
 int main(int argc, char **argv)
 {
 	char *rom_path = menu_FileBrowser();
+	//FILE *file;
+	//file = fopen("sdmc:/Switch/desmume/log2.txt", "w");
+	//fwrite(rom_path, 3, 100, file);
+	//fclose(file);
 	
 	libnx::gfxInitDefault();
 	libnx::consoleInit(NULL);
@@ -157,10 +161,6 @@ int main(int argc, char **argv)
 
 	while(1) 
 	{
-		keysDown = libnx::hidKeysDown(libnx::CONTROLLER_P1_AUTO);
-		if(keysDown & libnx::KEY_MINUS && libnx::KEY_PLUS)
-			break;
-		
 		for (int i = 0; i < UserConfiguration.frameSkip; i++)
 		{
 			NDS_SkipNextFrame();
@@ -181,6 +181,25 @@ int main(int argc, char **argv)
 
 		libnx::gfxFlushBuffers();
 		libnx::gfxSwapBuffers();
+		
+		keysDown = libnx::hidKeysDown(libnx::CONTROLLER_P1_AUTO);
+		if(keysDown & libnx::KEY_MINUS){
+			if(keysDown & libnx::KEY_PLUS){
+				NDS_FreeROM();
+				//KillDisplay();
+				NDS_DeInit();
+				//NDS_Quit;
+				break;
+			}
+		}else if(keysDown & libnx::KEY_PLUS){
+			if(keysDown & libnx::KEY_MINUS){
+				NDS_FreeROM();
+				//KillDisplay();
+				NDS_DeInit();
+				//NDS_Quit;
+				break;
+			}
+		}
     }
 	libnx::gfxExit();
 	return 0;
