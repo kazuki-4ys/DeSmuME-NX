@@ -38,9 +38,9 @@ INCLUDES	:=	src src/libretro-common/include
 EXEFS_SRC	:=	exefs_src
 ICON		:= Icon.jpg
 APP_TITLE   := DeSmuME-NX
-APP_AUTHOR  := MasterFeizz, Laprox
-APP_VERSION := 0.0.2
-
+APP_AUTHOR  := Laprox, MasterFeizz
+APP_VERSION := 0.0.3
+ROMFS	:=	romfs
 #ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
@@ -58,7 +58,8 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=  -lnx -lm -lz -lstdc++
+LIBS	:=  -lSDL2_mixer -lmodplug -lmpg123 -lvorbisidec -logg -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -ljpeg `sdl2-config --libs` `freetype-config --libs` -lnx -lm -lz -lstdc++
+#LIBS	:=  -lnx -lm -lz -lstdc++ -lSDL2 -lSDL2_gfx -lSDL2_image -lSDL2_mixer `sdl2-config --libs`
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
