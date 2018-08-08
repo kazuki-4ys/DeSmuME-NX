@@ -5,6 +5,10 @@ Port of DeSmuME DS Emulator for the Switch.
 
 It's currently a fully interpreted DS emulator, which means the performance is not so great.
 
+Place Yours roms in this folder
+
+sdmc:/switch/desmume/roms/
+
 To-do
 ------------------------
 ###### Too much to be listed
