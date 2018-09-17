@@ -15,7 +15,7 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <switch.h>
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "../utils/task.h"
 
@@ -51,7 +51,8 @@ static void taskProc(void *arg)
 	{
 		while (ctx->workFunc == NULL && !ctx->exitThread)
 		{
-			condvarWait(&ctx->condWork);
+			//condvarWait(&ctx->condWork);
+			condvarWait(&ctx->condWork, &ctx->mutex);
 		}
 
 		if (ctx->workFunc != NULL)
@@ -76,7 +77,8 @@ Task::Impl::Impl()
 	ret = NULL;
 	exitThread = false;
 
-	condvarInit(&condWork, &mutex);
+	condvarInit(&condWork);
+	//condvarInit(&condWork, &mutex);
 }
 
 Task::Impl::~Impl()
@@ -99,7 +101,7 @@ void Task::Impl::start(bool spinlock)
 
 	if (R_FAILED(res))
 	{
-		printf("Failed to create thread!\n");
+		//printf("Failed to create thread!\n");
 	}
 
 	threadStart( &_thread);

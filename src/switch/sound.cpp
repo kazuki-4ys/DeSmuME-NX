@@ -70,7 +70,8 @@ static void soundTask(void *)
 {
 	while(!soundTerminate)
 	{
-		libNX::condvarWait(&soundReady);
+		libNX::condvarWait(&soundReady, &soundMutex);
+		//libNX::condvarWait(&soundReady);
 		libNX::audoutWaitPlayFinish(&releasedBuffer, &releasedCount, U64_MAX);
 		libNX::mutexUnlock(&soundMutex);
 	}
@@ -82,8 +83,8 @@ int SNDSwitchInit(int buffersize)
 {
 	if(soundInitialized)
 		return 0;
-
-	condvarInit(&soundReady, &soundMutex);
+	libNX::condvarInit(&soundReady);
+	//libNX::condvarInit(&soundReady, &soundMutex);
 
 	libNX::audoutInitialize();
 	libNX::audoutStartAudioOut();

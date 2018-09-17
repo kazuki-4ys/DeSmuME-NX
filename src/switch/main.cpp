@@ -146,7 +146,8 @@ int main(int argc, char **argv)
 
   	NDS_Init();
 
-  	GPU->Change3DRendererByID(RENDERID_SOFTRASTERIZER);
+  	//GPU->Change3DRendererByID(RENDERID_OPENGL_AUTO);
+	GPU->Change3DRendererByID(RENDERID_SOFTRASTERIZER);
   	SPU_ChangeSoundCore(SNDCORE_SWITCH, 735 * 4);
 
 	CommonSettings.loadToMemory = true;
