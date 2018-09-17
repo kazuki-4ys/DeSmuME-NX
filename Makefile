@@ -39,9 +39,8 @@ EXEFS_SRC	:=	exefs_src
 ICON		:= Icon.jpg
 APP_TITLE   := DeSmuME-NX
 APP_AUTHOR  := Laprox, MasterFeizz
-APP_VERSION := 0.0.3
+APP_VERSION := 0.0.4
 ROMFS	:=	romfs
-#ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
 # options for code generation
