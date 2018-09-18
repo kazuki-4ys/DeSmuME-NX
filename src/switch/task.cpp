@@ -15,7 +15,7 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <switch.h>
-//#include <stdio.h>
+#include <stdio.h>
 
 #include "../utils/task.h"
 
@@ -98,16 +98,16 @@ void Task::Impl::start(bool spinlock)
 	this->exitThread = false;
 	
 	Result res = threadCreate( &_thread, &taskProc, this, 0x80000, 0x20, _numTasks++);
-
+	
 	if (R_FAILED(res))
 	{
-		//printf("Failed to create thread!\n");
+		printf("Failed to create thread!\n");
+	}else{
+
+		threadStart( &_thread);
+
+		this->_isThreadRunning = true;
 	}
-
-	threadStart( &_thread);
-
-	this->_isThreadRunning = true;
-
 }
 
 void Task::Impl::execute(const TWork &work, void *param)
