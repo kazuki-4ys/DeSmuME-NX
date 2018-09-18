@@ -163,14 +163,14 @@ void Selector(){
 		DrawText(fontA, 1090, 660, {255, 255, 255, 255}, " Load ROM");
 		DrawSymbol(fontB, 1060, 600, {255, 255, 255, 255}, UPDOWN);
 		DrawText(fontA, 1090, 600, {255, 255, 255, 255}, " Navigate");
-		string vert = "Vertical Mod: Press     to " + string(UserConfiguration.portraitEnabled? "disable" : "enable");
-		DrawSymbol(fontB, 285, 600, {255, 255, 255, 255}, B);
+		string vert = "Vertical Mod: Press      to " + string(UserConfiguration.portraitEnabled? "disable" : "enable");
+		DrawSymbol(fontB, 250, 600, {255, 255, 255, 255}, B);
 		DrawText(fontA, 30, 600, {255, 255, 255, 255}, vert.c_str());
-		string fs = "Frame Skip Value: Press     to decrease or increase: " + to_string(UserConfiguration.frameSkip);
-		DrawSymbol(fontB, 340, 630, {255, 255, 255, 255}, LEFTRIGHT);
+		string fs = "Frame Skip Value: Press      to decrease or increase: " + to_string(UserConfiguration.frameSkip);
+		DrawSymbol(fontB, 305, 630, {255, 255, 255, 255}, LEFTRIGHT);
 		DrawText(fontA, 30, 630, {255, 255, 255, 255}, fs.c_str());
-		string snd = "Sound: Press     to " + string(UserConfiguration.soundEnabled? "disable" : "enable");
-		DrawSymbol(fontB, 200, 660, {255, 255, 255, 255}, X);
+		string snd = "Sound: Press       to " + string(UserConfiguration.soundEnabled? "disable" : "enable");
+		DrawSymbol(fontB, 185, 660, {255, 255, 255, 255}, X);
 		DrawText(fontA, 30, 660, {255, 255, 255, 255}, snd.c_str());
 	/*} else{
 		DrawText(fontA, 30, 400, {255, 255, 255, 255}, "La Crude Selector");
@@ -230,8 +230,8 @@ const char* menu_FileBrowser()
 	romfsInit();
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
-	fontA=TTF_OpenFont("romfs:/FontStandard.ttf", 25);
-	fontB=TTF_OpenFont("romfs:/FontNintendoExtended.ttf", 25);
+	fontA=TTF_OpenFont("romfs:/font.ttf", 25);
+	fontB=TTF_OpenFont("romfs:/icons.ttf", 25);
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
 		std::cout << "Failed to initialise! Error: " << SDL_GetError( ) << std::endl;
 	}
