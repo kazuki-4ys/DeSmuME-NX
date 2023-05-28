@@ -80,7 +80,7 @@ static INLINE u32 T1ReadLong(u8* const  mem, u32 addr)
 #endif
 }
 
-static INLINE u64 T1ReadQuad(u8* const mem, const u32 addr)
+static INLINE DeSmumeU64 T1ReadQuad(u8* const mem, const u32 addr)
 {
 #ifdef MSB_FIRST
    return (u64(mem[addr + 7]) << 56 | u64(mem[addr + 6]) << 48 |
@@ -88,7 +88,7 @@ static INLINE u64 T1ReadQuad(u8* const mem, const u32 addr)
            u64(mem[addr + 3]) << 24 | u64(mem[addr + 2]) << 16 |
            u64(mem[addr + 1]) << 8  | u64(mem[addr    ]));
 #else
-   return *((u64 *) (mem + addr));
+   return *((DeSmumeU64 *) (mem + addr));
 #endif
 }
 
@@ -119,7 +119,7 @@ static INLINE void T1WriteLong(u8* const mem, const u32 addr, const u32 val)
 #endif
 }
 
-static INLINE void T1WriteQuad(u8* const mem, const u32 addr, const u64 val)
+static INLINE void T1WriteQuad(u8* const mem, const u32 addr, const DeSmumeU64 val)
 {
 #ifdef MSB_FIRST
 	mem[addr + 7] = (val >> 56);
@@ -131,7 +131,7 @@ static INLINE void T1WriteQuad(u8* const mem, const u32 addr, const u64 val)
     mem[addr + 1] = (val >> 8) & 0xFF;
     mem[addr] = val & 0xFF;
 #else
-	*((u64 *) (mem + addr)) = val;
+	*((DeSmumeU64 *) (mem + addr)) = val;
 #endif
 }
 

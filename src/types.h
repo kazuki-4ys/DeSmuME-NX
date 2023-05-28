@@ -188,12 +188,12 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-typedef unsigned long long u64;
+typedef unsigned long long DeSmumeU64;
 
 typedef signed char s8;
 typedef signed short s16;
 typedef signed int s32;
-typedef signed long long s64;
+typedef signed long long DeSmumeS64;
 #else
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -330,11 +330,11 @@ typedef enum
 	ARM7 = 1
 } cpu_id_t;
 
-inline u64 double_to_u64(double d)
+inline DeSmumeU64 double_to_u64(double d)
 {
 	union
 	{
-		u64 a;
+		DeSmumeU64 a;
 		double b;
 	} fuxor;
 	
@@ -342,11 +342,11 @@ inline u64 double_to_u64(double d)
 	return fuxor.a;
 }
 
-inline double u64_to_double(u64 u)
+inline double u64_to_double(DeSmumeU64 u)
 {
 	union
 	{
-		u64 a;
+		DeSmumeU64 a;
 		double b;
 	} fuxor;
 	
@@ -454,7 +454,7 @@ template<typename T> inline void reconstruct(T* t) {
 /* fixed point speedup macros */
 
 
-FORCEINLINE s32 sfx32_shiftdown(const s64 a)
+FORCEINLINE s32 sfx32_shiftdown(const DeSmumeS64 a)
 {
 	//TODO: replace me with direct calls to sfx32_shiftdown
 	return fx32_shiftdown(a);

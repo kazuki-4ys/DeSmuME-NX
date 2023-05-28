@@ -2371,7 +2371,7 @@ TEMPLATE static u32 FASTCALL  OP_MLA_S(const u32 i)
 TEMPLATE static u32 FASTCALL  OP_UMULL(const u32 i)
 {
 	u32 v = cpu->R[REG_POS(i,8)];
-	u64 res = (u64)cpu->R[REG_POS(i,0)] * (u64)v;
+	DeSmumeU64 res = (DeSmumeU64)cpu->R[REG_POS(i,0)] * (DeSmumeU64)v;
 	
 	cpu->R[REG_POS(i,12)] = (u32)res;
 	cpu->R[REG_POS(i,16)] = (u32)(res>>32);
@@ -2382,7 +2382,7 @@ TEMPLATE static u32 FASTCALL  OP_UMULL(const u32 i)
 TEMPLATE static u32 FASTCALL  OP_UMLAL(const u32 i)
 {
 	u32 v = cpu->R[REG_POS(i,8)];
-	u64 res = (u64)cpu->R[REG_POS(i,0)] * (u64)v;
+	DeSmumeU64 res = (DeSmumeU64)cpu->R[REG_POS(i,0)] * (DeSmumeU64)v;
 	
 	// RdLo = (Rm * Rs)[31:0] + RdLo /* Unsigned multiplication */
 	// RdHi = (Rm * Rs)[63:32] + RdHi + CarryFrom((Rm * Rs)[31:0] + RdLo)
@@ -2396,7 +2396,7 @@ TEMPLATE static u32 FASTCALL  OP_UMLAL(const u32 i)
 TEMPLATE static u32 FASTCALL  OP_UMULL_S(const u32 i)
 {
 	u32 v = cpu->R[REG_POS(i,8)];
-	u64 res = ((u64)cpu->R[REG_POS(i,0)] * (u64)v);
+	DeSmumeU64 res = ((DeSmumeU64)cpu->R[REG_POS(i,0)] * (DeSmumeU64)v);
 	
 	cpu->R[REG_POS(i,12)] = (u32)res;
 	cpu->R[REG_POS(i,16)] = (u32)(res>>32);
@@ -2410,7 +2410,7 @@ TEMPLATE static u32 FASTCALL  OP_UMULL_S(const u32 i)
 TEMPLATE static u32 FASTCALL  OP_UMLAL_S(const u32 i)
 {
 	u32 v = cpu->R[REG_POS(i,8)];
-	u64 res = (u64)cpu->R[REG_POS(i,0)] * (u64)v;
+	DeSmumeU64 res = (DeSmumeU64)cpu->R[REG_POS(i,0)] * (DeSmumeU64)v;
 	
 	// RdLo = (Rm * Rs)[31:0] + RdLo /* Unsigned multiplication */
 	// RdHi = (Rm * Rs)[63:32] + RdHi + CarryFrom((Rm * Rs)[31:0] + RdLo)
@@ -2444,8 +2444,8 @@ TEMPLATE static u32 FASTCALL  OP_UMLAL_S(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMULL(const u32 i)
 {
-	s64 v = (s32)cpu->R[REG_POS(i,8)];
-	s64 res = v * (s64)(s32)cpu->R[REG_POS(i,0)];
+	DeSmumeS64 v = (s32)cpu->R[REG_POS(i,8)];
+	DeSmumeS64 res = v * (DeSmumeS64)(s32)cpu->R[REG_POS(i,0)];
 	
 	cpu->R[REG_POS(i,12)] = (u32)res;
 	cpu->R[REG_POS(i,16)] = (u32)(res>>32);	
@@ -2456,8 +2456,8 @@ TEMPLATE static u32 FASTCALL  OP_SMULL(const u32 i)
 TEMPLATE static u32 FASTCALL  OP_SMLAL(const u32 i)
 {
 	
-	s64 v = (s32)cpu->R[REG_POS(i,8)];
-	s64 res = v * (s64)(s32)cpu->R[REG_POS(i,0)];
+	DeSmumeS64 v = (s32)cpu->R[REG_POS(i,8)];
+	DeSmumeS64 res = v * (DeSmumeS64)(s32)cpu->R[REG_POS(i,0)];
 	
 	//LOG("%08X * %08X + %08X%08X\n", cpu->R[REG_POS(i,0)], cpu->R[REG_POS(i,8)], cpu->R[REG_POS(i,16)], cpu->R[REG_POS(i,12)]);
 
@@ -2472,8 +2472,8 @@ TEMPLATE static u32 FASTCALL  OP_SMLAL(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMULL_S(const u32 i)
 {
-	s64 v = (s32)cpu->R[REG_POS(i,8)];
-	s64 res = v * (s64)(s32)cpu->R[REG_POS(i,0)];
+	DeSmumeS64 v = (s32)cpu->R[REG_POS(i,8)];
+	DeSmumeS64 res = v * (DeSmumeS64)(s32)cpu->R[REG_POS(i,0)];
 	
 	cpu->R[REG_POS(i,12)] = (u32)res;
 	cpu->R[REG_POS(i,16)] = (u32)(res>>32);	
@@ -2486,8 +2486,8 @@ TEMPLATE static u32 FASTCALL  OP_SMULL_S(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMLAL_S(const u32 i)
 {
-	s64 v = (s32)cpu->R[REG_POS(i,8)];
-	s64 res = v * (s64)(s32)cpu->R[REG_POS(i,0)];
+	DeSmumeS64 v = (s32)cpu->R[REG_POS(i,8)];
+	DeSmumeS64 res = v * (DeSmumeS64)(s32)cpu->R[REG_POS(i,0)];
 	
 	u32 tmp = (u32)res;
 	cpu->R[REG_POS(i,16)] = (u32)(res>>32) + cpu->R[REG_POS(i,16)] + CarryFrom(tmp, cpu->R[REG_POS(i,12)]);
@@ -3403,8 +3403,8 @@ TEMPLATE static u32 FASTCALL  OP_SMLA_T_T(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMLAL_B_B(const u32 i)
 {
-	s64 tmp = (s64)(LWORD(cpu->R[REG_POS(i,0)])* LWORD(cpu->R[REG_POS(i,8)]));
-	u64 res = (u64)tmp + cpu->R[REG_POS(i,12)];
+	DeSmumeS64 tmp = (DeSmumeS64)(LWORD(cpu->R[REG_POS(i,0)])* LWORD(cpu->R[REG_POS(i,8)]));
+	DeSmumeU64 res = (DeSmumeU64)tmp + cpu->R[REG_POS(i,12)];
 
 	//INFO("SMLALBB %08X * %08X + %08X%08X = %08X%08X\n", (int)cpu->R[REG_POS(i,0)], (int)cpu->R[REG_POS(i,8)], (int)cpu->R[REG_POS(i,16)], (int)cpu->R[REG_POS(i,12)], (int)(cpu->R[REG_POS(i,16)] + (res + ((tmp<0)*0xFFFFFFFF))), (int)(u32) res);
 
@@ -3416,8 +3416,8 @@ TEMPLATE static u32 FASTCALL  OP_SMLAL_B_B(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMLAL_B_T(const u32 i)
 {
-	s64 tmp = (s64)(LWORD(cpu->R[REG_POS(i,0)])* HWORD(cpu->R[REG_POS(i,8)]));
-	u64 res = (u64)tmp + cpu->R[REG_POS(i,12)];
+	DeSmumeS64 tmp = (DeSmumeS64)(LWORD(cpu->R[REG_POS(i,0)])* HWORD(cpu->R[REG_POS(i,8)]));
+	DeSmumeU64 res = (DeSmumeU64)tmp + cpu->R[REG_POS(i,12)];
 	
 	//INFO("SMLALBT %08X * %08X + %08X%08X = %08X%08X\n", (int)cpu->R[REG_POS(i,0)], (int)cpu->R[REG_POS(i,8)], (int)cpu->R[REG_POS(i,16)], (int)cpu->R[REG_POS(i,12)], (int)(cpu->R[REG_POS(i,16)] + res + ((tmp<0)*0xFFFFFFFF)), (int)(u32) res);
 
@@ -3429,8 +3429,8 @@ TEMPLATE static u32 FASTCALL  OP_SMLAL_B_T(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMLAL_T_B(const u32 i)
 {
-	s64 tmp = (s64)(HWORD(cpu->R[REG_POS(i,0)])* (s64)LWORD(cpu->R[REG_POS(i,8)]));
-	u64 res = (u64)tmp + cpu->R[REG_POS(i,12)];
+	DeSmumeS64 tmp = (DeSmumeS64)(HWORD(cpu->R[REG_POS(i,0)])* (DeSmumeS64)LWORD(cpu->R[REG_POS(i,8)]));
+	DeSmumeU64 res = (DeSmumeU64)tmp + cpu->R[REG_POS(i,12)];
 	
 	//INFO("SMLALTB %08X * %08X + %08X%08X = %08X%08X\n", (int)cpu->R[REG_POS(i,0)], (int)cpu->R[REG_POS(i,8)], (int)cpu->R[REG_POS(i,16)], (int)cpu->R[REG_POS(i,12)], (int)(cpu->R[REG_POS(i,16)] + res + ((tmp<0)*0xFFFFFFFF)), (int)(u32) res);
 
@@ -3442,8 +3442,8 @@ TEMPLATE static u32 FASTCALL  OP_SMLAL_T_B(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMLAL_T_T(const u32 i)
 {
-	s64 tmp = (s64)(HWORD(cpu->R[REG_POS(i,0)])* HWORD(cpu->R[REG_POS(i,8)]));
-	u64 res = (u64)tmp + cpu->R[REG_POS(i,12)];
+	DeSmumeS64 tmp = (DeSmumeS64)(HWORD(cpu->R[REG_POS(i,0)])* HWORD(cpu->R[REG_POS(i,8)]));
+	DeSmumeU64 res = (DeSmumeU64)tmp + cpu->R[REG_POS(i,12)];
 	
 	//INFO("SMLALTT %08X * %08X + %08X%08X = %08X%08X\n", (int)cpu->R[REG_POS(i,0)], (int)cpu->R[REG_POS(i,8)], (int)cpu->R[REG_POS(i,16)], (int)cpu->R[REG_POS(i,12)], (int)(cpu->R[REG_POS(i,16)] + res + ((tmp<0)*0xFFFFFFFF)), (int)(u32) res);
 	
@@ -3459,7 +3459,7 @@ TEMPLATE static u32 FASTCALL  OP_SMLAL_T_T(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMULW_B(const u32 i)
 {
-	s64 tmp = (s64)LWORD(cpu->R[REG_POS(i,8)]) * (s64)((s32)cpu->R[REG_POS(i,0)]);
+	DeSmumeS64 tmp = (DeSmumeS64)LWORD(cpu->R[REG_POS(i,8)]) * (DeSmumeS64)((s32)cpu->R[REG_POS(i,0)]);
 	
 	//INFO("SMULWB %08X * %08X = %08X\n", cpu->R[REG_POS(i,0)], cpu->R[REG_POS(i,8)], ((tmp>>16)&0xFFFFFFFF));
 	
@@ -3470,7 +3470,7 @@ TEMPLATE static u32 FASTCALL  OP_SMULW_B(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMULW_T(const u32 i)
 {
-	s64 tmp = (s64)HWORD(cpu->R[REG_POS(i,8)]) * (s64)((s32)cpu->R[REG_POS(i,0)]);
+	DeSmumeS64 tmp = (DeSmumeS64)HWORD(cpu->R[REG_POS(i,8)]) * (DeSmumeS64)((s32)cpu->R[REG_POS(i,0)]);
 	
 	//INFO("SMULWT %08X * %08X = %08X\n", cpu->R[REG_POS(i,0)], cpu->R[REG_POS(i,8)], ((tmp>>16)&0xFFFFFFFF));
 	
@@ -3485,7 +3485,7 @@ TEMPLATE static u32 FASTCALL  OP_SMULW_T(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMLAW_B(const u32 i)
 {
-	s64 tmp = (s64)LWORD(cpu->R[REG_POS(i,8)]) * (s64)((s32)cpu->R[REG_POS(i,0)]);
+	DeSmumeS64 tmp = (DeSmumeS64)LWORD(cpu->R[REG_POS(i,8)]) * (DeSmumeS64)((s32)cpu->R[REG_POS(i,0)]);
 	u32 a = cpu->R[REG_POS(i,12)];
 	
 	//INFO("SMLAWB %08X * %08X + %08X = %08X\n", cpu->R[REG_POS(i,0)], cpu->R[REG_POS(i,8)], a, (tmp>>16) + a);
@@ -3502,7 +3502,7 @@ TEMPLATE static u32 FASTCALL  OP_SMLAW_B(const u32 i)
 
 TEMPLATE static u32 FASTCALL  OP_SMLAW_T(const u32 i)
 {
-	s64 tmp = (s64)HWORD(cpu->R[REG_POS(i,8)]) * (s64)((s32)cpu->R[REG_POS(i,0)]);
+	DeSmumeS64 tmp = (DeSmumeS64)HWORD(cpu->R[REG_POS(i,8)]) * (DeSmumeS64)((s32)cpu->R[REG_POS(i,0)]);
 	u32 a = cpu->R[REG_POS(i,12)];
 	
 	//INFO("SMLAWT %08X * %08X + %08X = %08X\n", cpu->R[REG_POS(i,0)], cpu->R[REG_POS(i,8)], a, ((tmp>>16)&0xFFFFFFFF) + a);

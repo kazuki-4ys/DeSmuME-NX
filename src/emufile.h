@@ -86,12 +86,12 @@ public:
 	virtual size_t _fread(const void *ptr, size_t bytes) = 0;
 	virtual size_t fwrite(const void *ptr, size_t bytes) = 0;
 	
-	size_t write_64LE(s64 s64valueIn);
-	size_t write_64LE(u64 u64valueIn);
-	size_t read_64LE(s64 &s64valueOut);
-	size_t read_64LE(u64 &u64valueOut);
-	s64 read_s64LE();
-	u64 read_u64LE();
+	size_t write_64LE(DeSmumeS64 s64valueIn);
+	size_t write_64LE(DeSmumeU64 u64valueIn);
+	size_t read_64LE(DeSmumeS64 &s64valueOut);
+	size_t read_64LE(DeSmumeU64 &u64valueOut);
+	DeSmumeS64 read_s64LE();
+	DeSmumeU64 read_u64LE();
 	
 	size_t write_32LE(s32 s32valueIn);
 	size_t write_32LE(u32 u32valueIn);

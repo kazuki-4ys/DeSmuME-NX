@@ -103,9 +103,9 @@ void _KEY1::encrypt(u32 *ptr)
 #undef DWNUM
 
 //================================================================================== KEY2
-u64 _KEY2::bitsReverse39(u64 key)
+DeSmumeU64 _KEY2::bitsReverse39(DeSmumeU64 key)
 {
-	u64 tmp = 0;
+	DeSmumeU64 tmp = 0;
 	for (u32 i = 0; i < 39; i++)
 		 tmp |= ((key >> i) & 1) << (38 - i);
 
@@ -114,7 +114,7 @@ u64 _KEY2::bitsReverse39(u64 key)
 
 void _KEY2::applySeed(u8 PROCNUM)
 {
-	u64 tmp = (MMU_read8(PROCNUM, REG_ENCSEED0H) & 0xFF);
+	DeSmumeU64 tmp = (MMU_read8(PROCNUM, REG_ENCSEED0H) & 0xFF);
 	seed0 = MMU_read32(PROCNUM, REG_ENCSEED0L) | (tmp << 32);
 	tmp = (MMU_read8(PROCNUM, REG_ENCSEED1H) & 0xFF);
 	seed1 = MMU_read32(PROCNUM, REG_ENCSEED1L) | (tmp << 32);

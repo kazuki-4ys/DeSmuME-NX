@@ -107,8 +107,8 @@ DateTime rtcGetTime(void)
 		const u32 arm9rate_unitsperframe = 560190<<1;
 		const u32 arm9rate_unitspersecond = (u32)(arm9rate_unitsperframe * 59.8261);
 
-		u64 totalcycles = (u64)arm9rate_unitsperframe * currFrameCounter;
-		u64 totalseconds=totalcycles/arm9rate_unitspersecond;
+		DeSmumeU64 totalcycles = (DeSmumeU64)arm9rate_unitsperframe * currFrameCounter;
+		DeSmumeU64 totalseconds=totalcycles/arm9rate_unitspersecond;
 
 		DateTime timer = currMovieData.rtcStart;
 		return timer.AddSeconds(totalseconds);

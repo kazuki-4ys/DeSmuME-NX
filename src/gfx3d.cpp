@@ -669,24 +669,24 @@ FORCEINLINE s32 vec3dot_fixed32(const s32* a, const s32* b) {
 //Pretty much any math function in this file should be explicit about how it's handling precision.
 //Handling that stuff generically globally is not a winning proposition.
 
-FORCEINLINE s64 GEM_Mul32x16To64(const s32 a, const s16 b)
+FORCEINLINE DeSmumeS64 GEM_Mul32x16To64(const s32 a, const s16 b)
 {
-	return ((s64)a)*((s64)b);
+	return ((DeSmumeS64)a)*((DeSmumeS64)b);
 }
 
-FORCEINLINE s64 GEM_Mul32x32To64(const s32 a, const s32 b)
+FORCEINLINE DeSmumeS64 GEM_Mul32x32To64(const s32 a, const s32 b)
 {
 #ifdef _MSC_VER
 	return __emul(a,b);
 #else
-	return ((s64)a)*((s64)b);
+	return ((DeSmumeS64)a)*((DeSmumeS64)b);
 #endif
 }
 
-static s32 GEM_SaturateAndShiftdown36To32(const s64 val)
+static s32 GEM_SaturateAndShiftdown36To32(const DeSmumeS64 val)
 {
-	if(val>(s64)0x000007FFFFFFFFFFULL) return (s32)0x7FFFFFFFU;
-	if(val<(s64)0xFFFFF80000000000ULL) return (s32)0x80000000U;
+	if(val>(DeSmumeS64)0x000007FFFFFFFFFFULL) return (s32)0x7FFFFFFFU;
+	if(val<(DeSmumeS64)0xFFFFF80000000000ULL) return (s32)0x80000000U;
 
 	return fx32_shiftdown(val);
 }
@@ -732,8 +732,8 @@ static void SetVertex()
 	{
 		//Tested by: Eledees The Adventures of Kai and Zero (E) [title screen and frontend menus]
 		const s32 *mtxTex = mtxCurrent[MATRIXMODE_TEXTURE];
-		last_s = (s32)( (s64)(GEM_Mul32x16To64(mtxTex[0], s16coord[0]) + GEM_Mul32x16To64(mtxTex[4], s16coord[1]) + GEM_Mul32x16To64(mtxTex[8], s16coord[2]) + ((s64)_s << 24)) >> 24 );
-		last_t = (s32)( (s64)(GEM_Mul32x16To64(mtxTex[1], s16coord[0]) + GEM_Mul32x16To64(mtxTex[5], s16coord[1]) + GEM_Mul32x16To64(mtxTex[9], s16coord[2]) + ((s64)_t << 24)) >> 24 );
+		last_s = (s32)( (DeSmumeS64)(GEM_Mul32x16To64(mtxTex[0], s16coord[0]) + GEM_Mul32x16To64(mtxTex[4], s16coord[1]) + GEM_Mul32x16To64(mtxTex[8], s16coord[2]) + ((DeSmumeS64)_s << 24)) >> 24 );
+		last_t = (s32)( (DeSmumeS64)(GEM_Mul32x16To64(mtxTex[1], s16coord[0]) + GEM_Mul32x16To64(mtxTex[5], s16coord[1]) + GEM_Mul32x16To64(mtxTex[9], s16coord[2]) + ((DeSmumeS64)_t << 24)) >> 24 );
 	}
 
 	//refuse to do anything if we have too many verts or polys
@@ -1334,8 +1334,8 @@ static void gfx3d_glNormal(s32 v)
 		//SM64 highlight rendered star in main menu tests this
 		//also smackdown 2010 player textures tested this (needed cast on _s and _t)
 		const s32 *mtxTex = mtxCurrent[MATRIXMODE_TEXTURE];
-		last_s = (s32)( (s64)(GEM_Mul32x32To64(mtxTex[0], normal[0]) + GEM_Mul32x32To64(mtxTex[4], normal[1]) + GEM_Mul32x32To64(mtxTex[8], normal[2]) + ((s64)_s << 24)) >> 24 );
-		last_t = (s32)( (s64)(GEM_Mul32x32To64(mtxTex[1], normal[0]) + GEM_Mul32x32To64(mtxTex[5], normal[1]) + GEM_Mul32x32To64(mtxTex[9], normal[2]) + ((s64)_t << 24)) >> 24 );
+		last_s = (s32)( (DeSmumeS64)(GEM_Mul32x32To64(mtxTex[0], normal[0]) + GEM_Mul32x32To64(mtxTex[4], normal[1]) + GEM_Mul32x32To64(mtxTex[8], normal[2]) + ((DeSmumeS64)_s << 24)) >> 24 );
+		last_t = (s32)( (DeSmumeS64)(GEM_Mul32x32To64(mtxTex[1], normal[0]) + GEM_Mul32x32To64(mtxTex[5], normal[1]) + GEM_Mul32x32To64(mtxTex[9], normal[2]) + ((DeSmumeS64)_t << 24)) >> 24 );
 	}
 
 	MatrixMultVec3x3(mtxCurrent[MATRIXMODE_POSITION_VECTOR], normal);
@@ -1433,8 +1433,8 @@ static void gfx3d_glTexCoord(s32 val)
 	{
 		//dragon quest 4 overworld will test this
 		const s32 *mtxTex = mtxCurrent[MATRIXMODE_TEXTURE];
-		last_s = (s32)( (s64)(GEM_Mul32x32To64(mtxTex[0], _s) + GEM_Mul32x32To64(mtxTex[4], _t) + (s64)mtxTex[8] + (s64)mtxTex[12]) >> 12 );
-		last_t = (s32)( (s64)(GEM_Mul32x32To64(mtxTex[1], _s) + GEM_Mul32x32To64(mtxTex[5], _t) + (s64)mtxTex[9] + (s64)mtxTex[13]) >> 12 );
+		last_s = (s32)( (DeSmumeS64)(GEM_Mul32x32To64(mtxTex[0], _s) + GEM_Mul32x32To64(mtxTex[4], _t) + (DeSmumeS64)mtxTex[8] + (DeSmumeS64)mtxTex[12]) >> 12 );
+		last_t = (s32)( (DeSmumeS64)(GEM_Mul32x32To64(mtxTex[1], _s) + GEM_Mul32x32To64(mtxTex[5], _t) + (DeSmumeS64)mtxTex[9] + (DeSmumeS64)mtxTex[13]) >> 12 );
 	}
 	else if (texCoordTransformMode == TextureTransformationMode_None)
 	{

@@ -19,15 +19,21 @@
 * Boston, MA 02111-1307, USA.
 */
 #include <stdio.h>
-
-
-//DIRTY FIX FOR CONFLICTING TYPEDEFS
-namespace libnx 
-{
-	#include <switch.h>
-}
+#include <switch.h>
 
 #include <malloc.h>
+
+#include <EGL/egl.h>    // EGL library
+#include <EGL/eglext.h> // EGL extensions
+#include <glad/glad.h>  // glad library (OpenGL loader)
+
+// GLM headers
+#define GLM_FORCE_PURE
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "../MMU.h"
 #include "../NDSSystem.h"
@@ -40,10 +46,111 @@ namespace libnx
 
 #include "input.h"
 #include "sound.h"
-#include "menu.h"
 #include "config.h"
 
+#include "../opengl/mesh.h"
+
 volatile bool execute = FALSE;
+
+PadState pad;
+
+EGLDisplay s_display;
+EGLContext s_context;
+EGLSurface s_surface;
+
+bool initEgl(NWindow* win)
+{
+    // Connect to the EGL default display
+    s_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (!s_display)
+    {
+        goto _fail0;
+    }
+
+    // Initialize the EGL display connection
+    eglInitialize(s_display, nullptr, nullptr);
+
+    // Select OpenGL (Core) as the desired graphics API
+    if (eglBindAPI(EGL_OPENGL_API) == EGL_FALSE)
+    {
+        goto _fail1;
+    }
+
+    // Get an appropriate EGL framebuffer configuration
+    EGLConfig config;
+    EGLint numConfigs;
+    static const EGLint framebufferAttributeList[] =
+    {
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+        EGL_RED_SIZE,     8,
+        EGL_GREEN_SIZE,   8,
+        EGL_BLUE_SIZE,    8,
+        EGL_ALPHA_SIZE,   8,
+        EGL_DEPTH_SIZE,   24,
+        EGL_STENCIL_SIZE, 8,
+        EGL_NONE
+    };
+    eglChooseConfig(s_display, framebufferAttributeList, &config, 1, &numConfigs);
+    if (numConfigs == 0)
+    {
+        goto _fail1;
+    }
+
+    // Create an EGL window surface
+    s_surface = eglCreateWindowSurface(s_display, config, win, nullptr);
+    if (!s_surface)
+    {
+        goto _fail1;
+    }
+
+    // Create an EGL rendering context
+    static const EGLint contextAttributeList[] =
+    {
+        EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT_KHR,
+        EGL_CONTEXT_MAJOR_VERSION_KHR, 4,
+        EGL_CONTEXT_MINOR_VERSION_KHR, 3,
+        EGL_NONE
+    };
+    s_context = eglCreateContext(s_display, config, EGL_NO_CONTEXT, contextAttributeList);
+    if (!s_context)
+    {
+        goto _fail2;
+    }
+
+    // Connect the context to the surface
+    eglMakeCurrent(s_display, s_surface, s_surface, s_context);
+    return true;
+
+_fail2:
+    eglDestroySurface(s_display, s_surface);
+    s_surface = nullptr;
+_fail1:
+    eglTerminate(s_display);
+    s_display = nullptr;
+_fail0:
+    return false;
+}
+
+void deinitEgl(void)
+{
+    if (s_display)
+    {
+        eglMakeCurrent(s_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (s_context)
+        {
+            eglDestroyContext(s_display, s_context);
+            s_context = nullptr;
+        }
+        if (s_surface)
+        {
+            eglDestroySurface(s_display, s_surface);
+            s_surface = nullptr;
+        }
+        eglTerminate(s_display);
+        s_display = nullptr;
+    }
+}
+
 
 static inline uint8_t convert5To8(uint8_t x)
 {
@@ -91,29 +198,33 @@ int cycles;
 
 static unsigned short keypad;
 
+unsigned int calcFrameBufOffset(unsigned int x, unsigned int y, unsigned int width, unsigned int height){
+	return ((height - 1) - y) * width + x;
+}
+
 static void desmume_cycle()
 {
     process_ctrls_events(&keypad);
 
-    libnx::touchPosition touch;
-	hidTouchRead(&touch, 0);
+    //touchPosition touch;
+	//hidTouchRead(&touch, 0);
 		
-	if(UserConfiguration.portraitEnabled){
+	/*if(UserConfiguration.portraitEnabled){
 		if(touch.px > 538.9473684210526 && touch.px < 1077.894736842105 && touch.py > 0 && touch.py < 720){
 			NDS_setTouchPos((-touch.py + 720) / 2.807017543859649, (touch.px - 540) / 2.8125);
 		} else {
             NDS_releaseTouch();
         }
 			//NDS_setTouchPos((-touch.py + 720) / 2.807017543859649, (touch.px - 540) / 2.8125);//Working solution!		
-	}
+	}*/
 		
-	else if(!UserConfiguration.portraitEnabled){
+	/*else if(!UserConfiguration.portraitEnabled){
 		if(touch.px > 401 && touch.px < 882 && touch.py > 360 && touch.py < 720){
 			NDS_setTouchPos((touch.px - 401) / 1.875,(touch.py - 360) / 1.875);
 		} else {
             NDS_releaseTouch();
         }
-	}
+	}*/
 
 	update_keypad(keypad);
 	
@@ -125,16 +236,40 @@ static void desmume_cycle()
 
 int main(int argc, char **argv)
 {
-	char *rom_path = menu_FileBrowser();
+	romfsInit();
+	unsigned int screenW, screenH;
+	//char *rom_path = menu_FileBrowser();
+	const char *rom_path = "sdmc:/switch/desmume/rom.nds";
 	//FILE *file;
 	//file = fopen("sdmc:/Switch/desmume/log2.txt", "w");
 	//fwrite(rom_path, 3, 100, file);
 	//fclose(file);
 	
-	libnx::gfxInitDefault();
-	libnx::consoleInit(NULL);
+	//gfxInitDefault();
+	
+	//consoleInit(NULL);
+	// Retrieve the default window
+    NWindow* win = nwindowGetDefault();
 
-	UserConfiguration.portraitEnabled ? libnx::gfxConfigureResolution(456, 256) : libnx::gfxConfigureResolution(684, 384);
+    // Create a linear double-buffered framebuffer
+    Framebuffer fb;
+	if(UserConfiguration.portraitEnabled){
+		screenW = 456;
+		screenH = 256;
+	}else{
+		screenW = 684;
+		screenH = 384;
+	}
+	unsigned int framebufferSize = screenW * screenH * 4;
+	unsigned char *glTexRaw = (unsigned char*)calloc(framebufferSize, sizeof(unsigned char));
+	initEgl(win);
+    gladLoadGL();
+
+	TwoDDynamicTexQuad* desmumeRenderer = new TwoDDynamicTexQuad();
+    desmumeRenderer->posZ = 0.1f;
+	desmumeRenderer->run1Fr(0.0f);
+
+	//UserConfiguration.portraitEnabled ? gfxConfigureResolution(456, 256) : gfxConfigureResolution(684, 384);
 
 	/* the firmware settings */
 	struct NDS_fw_config_data fw_config;
@@ -159,9 +294,14 @@ int main(int argc, char **argv)
 	execute = TRUE;
 	u32 width, height;
 	uint32_t keysDown;
+	unsigned int stride;
 
-	while(1) 
+	padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+    padInitializeDefault(&pad);
+
+	while(appletMainLoop()) 
 	{
+		padUpdate(&pad);
 		for (int i = 0; i < UserConfiguration.frameSkip; i++)
 		{
 			NDS_SkipNextFrame();
@@ -171,29 +311,44 @@ int main(int argc, char **argv)
 		desmume_cycle();
 
 		uint16_t * src = (uint16_t *)GPU->GetDisplayInfo().masterNativeBuffer;
-		uint32_t *framebuffer = (uint32_t*)libnx::gfxGetFramebuffer(&width, &height);
+		//uint32_t *framebuffer = (uint32_t*)gfxGetFramebuffer(&width, &height);
+
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		for(int x = 0; x < xScale; x++){
     		for(int y = 0; y < (192 * 2); y++){
-    			uint32_t offset = UserConfiguration.portraitEnabled ? libnx::gfxGetFramebufferDisplayOffset(y, -x + (height / 2) + (xScale / 2) - 2) : libnx::gfxGetFramebufferDisplayOffset(214 + x, y);
-        		framebuffer[offset] = ABGR1555toRGBA8(src[((y * xScale) + x)]);
+    			//uint32_t offset = UserConfiguration.portraitEnabled ? gfxGetFramebufferDisplayOffset(y, -x + (height / 2) + (xScale / 2) - 2) : gfxGetFramebufferDisplayOffset(214 + x, y);
+        		//framebuffer[offset] = ABGR1555toRGBA8(src[((y * xScale) + x)]);
+				unsigned int color;
+				if(UserConfiguration.portraitEnabled){
+					color = ABGR1555toRGBA8(src[((y * xScale) + x)]);
+					memcpy(glTexRaw + (calcFrameBufOffset(y, -x + (height / 2) + (xScale / 2) - 2, screenW, screenH) * 4), &color, 4);
+				}else{
+					color = ABGR1555toRGBA8(src[((y * xScale) + x)]);
+					memcpy(glTexRaw + (calcFrameBufOffset(214 + x, y, screenW, screenH) * 4), &color, 4);
+				}
     		}
 		}
+		desmumeRenderer->setTex(glTexRaw, screenW, screenH);
+		desmumeRenderer->render();
 
-		libnx::gfxFlushBuffers();
-		libnx::gfxSwapBuffers();
+		eglSwapBuffers(s_display, s_surface);//フレームバッファのスワップ
+		//gfxFlushBuffers();
+		//gfxSwapBuffers();
 		
-		keysDown = libnx::hidKeysDown(libnx::CONTROLLER_P1_AUTO);
-		if(keysDown & libnx::KEY_MINUS){
-			if(keysDown & libnx::KEY_PLUS){
+		//keysDown = hidKeysDown(CONTROLLER_P1_AUTO);
+		keysDown = padGetButtonsDown(&pad);
+		if(keysDown &  HidNpadButton_Minus){
+			if(keysDown & HidNpadButton_Plus){
 				NDS_FreeROM();
 				//KillDisplay();
 				NDS_DeInit();
 				//NDS_Quit;
 				break;
 			}
-		}else if(keysDown & libnx::KEY_PLUS){
-			if(keysDown & libnx::KEY_MINUS){
+		}else if(keysDown & HidNpadButton_Plus){
+			if(keysDown &  HidNpadButton_Minus){
 				NDS_FreeROM();
 				//KillDisplay();
 				NDS_DeInit();
@@ -202,6 +357,10 @@ int main(int argc, char **argv)
 			}
 		}
     }
-	libnx::gfxExit();
+	delete desmumeRenderer;
+	deinitEgl();
+	//gfxExit();
+	free(glTexRaw);
+	romfsExit();
 	return 0;
 }

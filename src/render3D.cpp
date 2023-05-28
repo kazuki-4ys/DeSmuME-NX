@@ -432,7 +432,7 @@ Render3DError Render3D::RenderFog(const u8 *densityTable, const u32 color, const
 	return RENDER3DERROR_NOERR;
 }
 
-Render3DError Render3D::EndRender(const u64 frameCount)
+Render3DError Render3D::EndRender(const DeSmumeU64 frameCount)
 {
 	return RENDER3DERROR_NOERR;
 }

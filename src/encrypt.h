@@ -53,12 +53,12 @@ struct _KEY1
 struct _KEY2
 {
 private:
-	u64 seed0;
-	u64 seed1;
-	u64 x;
-	u64 y;
+	DeSmumeU64 seed0;
+	DeSmumeU64 seed1;
+	DeSmumeU64 x;
+	DeSmumeU64 y;
 
-	u64 bitsReverse39(u64 key);
+	DeSmumeU64 bitsReverse39(DeSmumeU64 key);
 
 public:
 	_KEY2() :	seed0(0x58C56DE0E8ULL), 

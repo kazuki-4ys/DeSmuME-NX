@@ -76,7 +76,7 @@ template<typename T> T templateIntegerDecFromIstream(EMUFILE &is)
 }
 
 inline u32 u32DecFromIstream(EMUFILE &is) { return templateIntegerDecFromIstream<u32>(is); }
-inline u64 u64DecFromIstream(EMUFILE &is) { return templateIntegerDecFromIstream<u64>(is); }
+inline DeSmumeU64 u64DecFromIstream(EMUFILE &is) { return templateIntegerDecFromIstream<DeSmumeU64>(is); }
 
 //puts an optionally 0-padded decimal integer of type T into the ostream (0-padding is quicker)
 template<typename T, int DIGITS, bool PAD> void putdec(EMUFILE &os, T dec)

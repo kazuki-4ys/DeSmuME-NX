@@ -902,14 +902,14 @@ enum ESI_DISPCNT
 	ESI_DISPCNT_HStart, ESI_DISPCNT_HStartIRQ, ESI_DISPCNT_HDraw, ESI_DISPCNT_HBlank
 };
 
-u64 nds_timer;
-u64 nds_arm9_timer, nds_arm7_timer;
+DeSmumeU64 nds_timer;
+DeSmumeU64 nds_arm9_timer, nds_arm7_timer;
 
-static const u64 kNever = 0xFFFFFFFFFFFFFFFFULL;
+static const DeSmumeU64 kNever = 0xFFFFFFFFFFFFFFFFULL;
 
 struct TSequenceItem
 {
-	u64 timestamp;
+	DeSmumeU64 timestamp;
 	u32 param;
 	bool enabled;
 
@@ -933,7 +933,7 @@ struct TSequenceItem
 		return enabled && nds_timer >= timestamp;
 	}
 
-	FORCEINLINE u64 next()
+	FORCEINLINE DeSmumeU64 next()
 	{
 		return timestamp;
 	}
@@ -955,7 +955,7 @@ struct TSequenceItem_GXFIFO : public TSequenceItem
 		}
 	}
 
-	FORCEINLINE u64 next()
+	FORCEINLINE DeSmumeU64 next()
 	{
 		if(enabled) return MMU.gfx3dCycles;
 		else return kNever;
@@ -974,7 +974,7 @@ template<int procnum, int num> struct TSequenceItem_Timer : public TSequenceItem
 		enabled = MMU.timerON[procnum][num] && MMU.timerMODE[procnum][num] != 0xFFFF;
 	}
 
-	FORCEINLINE u64 next()
+	FORCEINLINE DeSmumeU64 next()
 	{
 		return nds.timerCycle[procnum][num];
 	}
@@ -1042,7 +1042,7 @@ template<int procnum, int chan> struct TSequenceItem_DMA : public TSequenceItem
 		return controller->dmaCheck?TRUE:FALSE;
 	}
 
-	FORCEINLINE u64 next()
+	FORCEINLINE DeSmumeU64 next()
 	{
 		return controller->nextEvent;
 	}
@@ -1098,7 +1098,7 @@ struct TSequenceItem_ReadSlot1 : public TSequenceItem
 
 	bool isEnabled() { return this->enabled; }
 
-	FORCEINLINE u64 next()
+	FORCEINLINE DeSmumeU64 next()
 	{
 		return timestamp;
 	}
@@ -1124,7 +1124,7 @@ struct TSequenceItem_divider : public TSequenceItem
 
 	bool isEnabled() { return MMU.divRunning!=0; }
 
-	FORCEINLINE u64 next()
+	FORCEINLINE DeSmumeU64 next()
 	{
 		return MMU.divCycles;
 	}
@@ -1156,7 +1156,7 @@ struct TSequenceItem_sqrtunit : public TSequenceItem
 
 	bool isEnabled() { return MMU.sqrtRunning!=0; }
 
-	FORCEINLINE u64 next()
+	FORCEINLINE DeSmumeU64 next()
 	{
 		return MMU.sqrtCycles;
 	}
@@ -1193,7 +1193,7 @@ struct Sequencer
 	void init();
 
 	void execHardware();
-	u64 findNext();
+	DeSmumeU64 findNext();
 
 	void save(EMUFILE &os)
 	{
@@ -1304,7 +1304,7 @@ static void initSchedule()
 // ARM7_CLOCK   = 33.51 mhz
 //				= 33513982 cycles per second
 // 				= 33.513982 cycles per microsecond
-const u64 kWifiCycles = 67;//34*2;
+const DeSmumeU64 kWifiCycles = 67;//34*2;
 //(this isn't very precise. I don't think it needs to be)
 
 void Sequencer::init()
@@ -1629,7 +1629,7 @@ FORCEINLINE u32 _fast_min32(u32 a, u32 b, u32 c, u32 d)
 	return ((( ((s32)(a-b)) >> (32-1)) & (c^d)) ^ d);
 }
 
-FORCEINLINE u64 _fast_min(u64 a, u64 b)
+FORCEINLINE DeSmumeU64 _fast_min(DeSmumeU64 a, DeSmumeU64 b)
 {
 	//you might find that this is faster on a 64bit system; someone should try it
 	//http://aggregate.org/MAGIC/#Integer%20Selection
@@ -1654,10 +1654,10 @@ FORCEINLINE u64 _fast_min(u64 a, u64 b)
 
 
 
-u64 Sequencer::findNext()
+DeSmumeU64 Sequencer::findNext()
 {
 	//this one is always enabled so dont bother to check it
-	u64 next = dispcnt.next();
+	DeSmumeU64 next = dispcnt.next();
 
 	if(divider.isEnabled()) next = _fast_min(next,divider.next());
 	if(sqrtunit.isEnabled()) next = _fast_min(next,sqrtunit.next());
@@ -1885,7 +1885,7 @@ template<bool doarm9, bool doarm7, bool jit>
 template<bool doarm9, bool doarm7>
 #endif
 static /*donotinline*/ std::pair<s32,s32> armInnerLoop(
-	const u64 nds_timer_base, const s32 s32next, s32 arm9, s32 arm7)
+	const DeSmumeU64 nds_timer_base, const s32 s32next, s32 arm9, s32 arm7)
 {
 	s32 timer = minarmtime<doarm9,doarm7>(arm9,arm7);
 	while(timer < s32next && !sequencer.reschedule && execute)
@@ -2038,7 +2038,7 @@ void NDS_exec(s32 nb)
 			execHardware_interrupts();
 
 			//find next work unit:
-			u64 next = sequencer.findNext();
+			DeSmumeU64 next = sequencer.findNext();
 			next = min(next,nds_timer+kMaxWork); //lets set an upper limit for now
 
 			//printf("%d\n",(next-nds_timer));
@@ -2046,7 +2046,7 @@ void NDS_exec(s32 nb)
 			sequencer.reschedule = false;
 
 			//cast these down to 32bits so that things run faster on 32bit procs
-			u64 nds_timer_base = nds_timer;
+			DeSmumeU64 nds_timer_base = nds_timer;
 			s32 arm9 = (s32)(nds_arm9_timer-nds_timer);
 			s32 arm7 = (s32)(nds_arm7_timer-nds_timer);
 			s32 s32next = (s32)(next-nds_timer);
@@ -2598,7 +2598,7 @@ void NDS_Reset()
 	nds.power2.speakers = 1;
 	nds.power2.wifi = 0;
 	nds.wifiCycle = 0;
-	memset(nds.timerCycle, 0, sizeof(u64) * 2 * 4);
+	memset(nds.timerCycle, 0, sizeof(DeSmumeU64) * 2 * 4);
 	nds.old = 0;
 	nds.scr_touchX = nds.scr_touchY = nds.adc_touchX = nds.adc_touchY = 0;
 	nds.isTouch = 0;

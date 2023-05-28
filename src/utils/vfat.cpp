@@ -89,7 +89,7 @@ static eCallbackType callbackType;
 
 //for eCallbackType_Count:
 static bool count_failed = false;
-static u64 dataSectors = 0;
+static DeSmumeU64 dataSectors = 0;
 
 //recursing related.. really ought to be merged with list_files functionality
 static std::string currPath;

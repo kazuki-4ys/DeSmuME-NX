@@ -368,7 +368,7 @@ TextureCacheKey TextureCache::GenerateKey(const TEXIMAGE_PARAM texAttributes, co
 {
 	// Since the repeat, flip, and coordinate transformation modes are render settings
 	// and not data settings, we can mask out those bits to help reduce duplicate entries.
-	return (TextureCacheKey)( ((u64)palAttributes << 32) | (u64)(texAttributes.value & 0x3FF0FFFF) );
+	return (TextureCacheKey)( ((DeSmumeU64)palAttributes << 32) | (DeSmumeU64)(texAttributes.value & 0x3FF0FFFF) );
 }
 
 TextureStore::TextureStore()

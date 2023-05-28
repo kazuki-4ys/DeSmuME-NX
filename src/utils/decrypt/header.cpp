@@ -80,7 +80,7 @@ unsigned short CalcLogoCRC(Header &header)
  */
 int DetectRomType(const Header &header, char *secure)
 {
-	const u64 data = LE_TO_LOCAL_64(*(u64 *)secure);
+	const DeSmumeU64 data = LE_TO_LOCAL_64(*(DeSmumeU64 *)secure);
 	
 	//this is attempting to check for an utterly invalid nds header
 	if(header.unitcode > 3) return ROMTYPE_INVALID;

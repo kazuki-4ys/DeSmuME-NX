@@ -132,7 +132,7 @@ private:
 			size++;
 		}
 
-		s64 rollingTotalSize;
+		DeSmumeS64 rollingTotalSize;
 
 		u32 kAverageSize;
 

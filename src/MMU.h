@@ -194,7 +194,7 @@ public:
 	//other conditions may be automatically triggered based on scanning conditions
 	BOOL triggered;
 
-	u64 nextEvent;
+	DeSmumeU64 nextEvent;
 
 	int procnum, chan;
 
@@ -434,13 +434,13 @@ struct MMU_struct
 	template<int PROCNUM> u32 gen_IF();
 
 	BOOL divRunning;
-	s64 divResult;
-	s64 divMod;
-	u64 divCycles;
+	DeSmumeS64 divResult;
+	DeSmumeS64 divMod;
+	DeSmumeU64 divCycles;
 
 	BOOL sqrtRunning;
 	u32 sqrtResult;
-	u64 sqrtCycles;
+	DeSmumeU64 sqrtCycles;
 
 	u16 SPI_CNT;
 	u16 SPI_CMD;
@@ -449,7 +449,7 @@ struct MMU_struct
 
 	u8 WRAMCNT;
 
-	u64 gfx3dCycles;
+	DeSmumeU64 gfx3dCycles;
 
 	u8 powerMan_CntReg;
 	BOOL powerMan_CntRegWritten;

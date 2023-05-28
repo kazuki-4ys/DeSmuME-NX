@@ -124,17 +124,17 @@ public:
 		return val;
 	}
 
-	static const s64 TicksPerDay = 864000000000LL;
-	static const s64 TicksPerHour = 36000000000LL;
-	static const s64 TicksPerMillisecond = 10000LL;
-	static const s64 TicksPerMinute = 600000000LL;
-	static const s64 TicksPerSecond = 10000000LL;
+	static const DeSmumeS64 TicksPerDay = 864000000000LL;
+	static const DeSmumeS64 TicksPerHour = 36000000000LL;
+	static const DeSmumeS64 TicksPerMillisecond = 10000LL;
+	static const DeSmumeS64 TicksPerMinute = 600000000LL;
+	static const DeSmumeS64 TicksPerSecond = 10000000LL;
 
 	TimeSpan ()
 	{
 	}
 
-	TimeSpan (s64 ticks)
+	TimeSpan (DeSmumeS64 ticks)
 		: _ticks(ticks)
 	{
 	}
@@ -159,7 +159,7 @@ public:
 	int get_Milliseconds() const { return (int) (_ticks % TicksPerSecond / TicksPerMillisecond); }
 	int get_Minutes() const { return (int) (_ticks % TicksPerHour / TicksPerMinute); }
 	int get_Seconds() const { return (int) (_ticks % TicksPerMinute / TicksPerSecond); }
-	s64 get_Ticks() const { return _ticks; }
+	DeSmumeS64 get_Ticks() const { return _ticks; }
 	double get_TotalDays() const { return (double) _ticks / TicksPerDay; }
 	double get_TotalHours() const { return (double) _ticks / TicksPerHour; }
 	double get_TotalMilliseconds() const { return (double) _ticks  / TicksPerMillisecond; }
@@ -220,7 +220,7 @@ public:
 	//	return From (value, TicksPerMillisecond);
 	//}
 
-	static TimeSpan FromTicks (s64 value)
+	static TimeSpan FromTicks (DeSmumeS64 value)
 	{
 		return TimeSpan (value);
 	}
@@ -294,15 +294,15 @@ public:
 
 
 private:
-	s64 _ticks;
+	DeSmumeS64 _ticks;
 
-	static s64 CalculateTicks (int days, int hours, int minutes, int seconds, int milliseconds)
+	static DeSmumeS64 CalculateTicks (int days, int hours, int minutes, int seconds, int milliseconds)
 	{
 		// there's no overflow checks for hours, minutes, ...
 		// so big hours/minutes values can overflow at some point and change expected values
 		int hrssec = (hours * 3600); // break point at (Int32.MaxValue - 596523)
 		int minsec = (minutes * 60);
-		s64 t = ((s64)(hrssec + minsec + seconds) * 1000L + (s64)milliseconds);
+		DeSmumeS64 t = ((DeSmumeS64)(hrssec + minsec + seconds) * 1000L + (DeSmumeS64)milliseconds);
 		t *= 10000;
 
 		bool overflow = false;
@@ -310,9 +310,9 @@ private:
 		// "legal" (i.e. temporary) (e.g. if other parameters are negative) or 
 		// illegal (e.g. sign change).
 		if (days > 0) {
-			s64 td = TicksPerDay * days;
+			DeSmumeS64 td = TicksPerDay * days;
 			if (t < 0) {
-				s64 ticks = t;
+				DeSmumeS64 ticks = t;
 				t += td;
 				// positive days -> total ticks should be lower
 				overflow = (ticks > t);
@@ -324,14 +324,14 @@ private:
 			}
 		}
 		else if (days < 0) {
-			s64 td = TicksPerDay * days;
+			DeSmumeS64 td = TicksPerDay * days;
 			if (t <= 0) {
 				t += td;
 				// negative + negative != positive result
 				overflow = (t > 0);
 			}
 			else {
-				s64 ticks = t;
+				DeSmumeS64 ticks = t;
 				t += td;
 				// negative days -> total ticks should be lower
 				overflow = (t > ticks);
@@ -383,17 +383,17 @@ private:
 
 	// w32 file time starts counting from 1/1/1601 00:00 GMT
 	// which is the constant ticks from the .NET epoch
-	static const s64 w32file_epoch = 504911232000000000LL;
+	static const DeSmumeS64 w32file_epoch = 504911232000000000LL;
 
 	//private const long MAX_VALUE_TICKS = 3155378975400000000L;
 	// -- Microsoft .NET has this value.
-	static const s64 MAX_VALUE_TICKS = 3155378975999999999LL;
+	static const DeSmumeS64 MAX_VALUE_TICKS = 3155378975999999999LL;
 
 	//
 	// The UnixEpoch, it begins on Jan 1, 1970 at 0:0:0, expressed
 	// in Ticks
 	//
-	static const s64 UnixEpoch = 621355968000000000LL;
+	static const DeSmumeS64 UnixEpoch = 621355968000000000LL;
 
 
 	static const int daysmonth[13];
@@ -489,7 +489,7 @@ public:
 
 	static const char* GetNameOfMonth(int month) { return monthnames[month]; }
 
-	DateTime (s64 ticks)
+	DateTime (DeSmumeS64 ticks)
 	{
 		this->ticks = TimeSpan (ticks);
 		//removed error handling
@@ -595,7 +595,7 @@ public:
 		return DateTime(tm->tm_year+1900,tm->tm_mon+1,tm->tm_mday,tm->tm_hour,tm->tm_min,tm->tm_sec);
 	}
 
-	s64 get_Ticks()const
+	DeSmumeS64 get_Ticks()const
 	{ 
 		return ticks.get_Ticks();
 	}
@@ -623,7 +623,7 @@ public:
 		return AddMilliseconds (round(value * 86400000));
 	}
 
-	DateTime AddTicks (const s64 value) const
+	DateTime AddTicks (const DeSmumeS64 value) const
 	{
 		//removed error handling
 		//if ((value + ticks.Ticks) > MAX_VALUE_TICKS || (value + ticks.Ticks) < 0) {
@@ -645,7 +645,7 @@ public:
 		throw new ArgumentOutOfRangeException();
 		}
 		*/		
-		s64 msticks = (s64) round(value * TimeSpan::TicksPerMillisecond);
+		DeSmumeS64 msticks = (DeSmumeS64) round(value * TimeSpan::TicksPerMillisecond);
 		return AddTicks (msticks);
 	}
 

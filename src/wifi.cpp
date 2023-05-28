@@ -335,7 +335,7 @@ WifiComInterface* wifiCom;
  *******************************************************************************/
 
 // TODO: find the right value
-// GBAtek says it is 10µs, however that value seems too small
+// GBAtek says it is 10ï¿½s, however that value seems too small
 // (MP host sends floods of data frames, clients can't keep up)
 // 100 would make more sense since CMDCOUNT is set to 166
 // that would be 16.6ms ~= 1 frame
@@ -949,7 +949,7 @@ static void WIFI_PreTXAdjustments(u32 slot)
 	// Set timestamp (for beacons only)
 	if (slot == WIFI_TXSLOT_BEACON)
 	{
-		*(u64*)&wifiMac.RAM[address + 6 + 12] = wifiMac.usec;
+		*(DeSmumeU64*)&wifiMac.RAM[address + 6 + 12] = wifiMac.usec;
 		//((u8*)wifiMac.RAM)[((address+6+12)<<1) + WIFI_IOREG(0x84)] = 0x01;
 	}
 
@@ -1236,19 +1236,19 @@ void WIFI_write16(u32 address, u16 val)
 			wifiMac.ucmpEnable = BIT0(val);
 			break;
 		case REG_WIFI_USCOUNTER0:
-			wifiMac.usec = (wifiMac.usec & 0xFFFFFFFFFFFF0000ULL) | (u64)val;
+			wifiMac.usec = (wifiMac.usec & 0xFFFFFFFFFFFF0000ULL) | (DeSmumeU64)val;
 			break;
 		case REG_WIFI_USCOUNTER1:
-			wifiMac.usec = (wifiMac.usec & 0xFFFFFFFF0000FFFFULL) | (u64)val << 16;
+			wifiMac.usec = (wifiMac.usec & 0xFFFFFFFF0000FFFFULL) | (DeSmumeU64)val << 16;
 			break;
 		case REG_WIFI_USCOUNTER2:
-			wifiMac.usec = (wifiMac.usec & 0xFFFF0000FFFFFFFFULL) | (u64)val << 32;
+			wifiMac.usec = (wifiMac.usec & 0xFFFF0000FFFFFFFFULL) | (DeSmumeU64)val << 32;
 			break;
 		case REG_WIFI_USCOUNTER3:
-			wifiMac.usec = (wifiMac.usec & 0x0000FFFFFFFFFFFFULL) | (u64)val << 48;
+			wifiMac.usec = (wifiMac.usec & 0x0000FFFFFFFFFFFFULL) | (DeSmumeU64)val << 48;
 			break;
 		case REG_WIFI_USCOMPARE0:
-			wifiMac.ucmp = (wifiMac.ucmp & 0xFFFFFFFFFFFF0000ULL) | (u64)(val & 0xFFFE);
+			wifiMac.ucmp = (wifiMac.ucmp & 0xFFFFFFFFFFFF0000ULL) | (DeSmumeU64)(val & 0xFFFE);
 			// in NSMB multiplayer, Luigi sets USCOMPARE to the USCOUNTER of Mario, and sets bit0
 			// possibly bit0 writes USCOMPARE into USCOUNTER?
 			// it seems to also trigger IRQ14
@@ -1261,13 +1261,13 @@ void WIFI_write16(u32 address, u16 val)
 			}
 			break;
 		case REG_WIFI_USCOMPARE1:
-			wifiMac.ucmp = (wifiMac.ucmp & 0xFFFFFFFF0000FFFFULL) | (u64)val << 16;
+			wifiMac.ucmp = (wifiMac.ucmp & 0xFFFFFFFF0000FFFFULL) | (DeSmumeU64)val << 16;
 			break;
 		case REG_WIFI_USCOMPARE2:
-			wifiMac.ucmp = (wifiMac.ucmp & 0xFFFF0000FFFFFFFFULL) | (u64)val << 32;
+			wifiMac.ucmp = (wifiMac.ucmp & 0xFFFF0000FFFFFFFFULL) | (DeSmumeU64)val << 32;
 			break;
 		case REG_WIFI_USCOMPARE3:
-			wifiMac.ucmp = (wifiMac.ucmp & 0x0000FFFFFFFFFFFFULL) | (u64)val << 48;
+			wifiMac.ucmp = (wifiMac.ucmp & 0x0000FFFFFFFFFFFFULL) | (DeSmumeU64)val << 48;
 			break;
 		case REG_WIFI_BEACONPERIOD:
 			wifiMac.BeaconInterval = val & 0x03FF;
@@ -1288,7 +1288,7 @@ void WIFI_write16(u32 address, u16 val)
 			wifiMac.eCountEnable = BIT0(val);
 			break;
 		case REG_WIFI_EXTRACOUNT:
-			WIFI_LOG(3, "EXTRACOUNT=%i (%i µs)\n", val, val*WIFI_CMDCOUNT_SLICE);
+			WIFI_LOG(3, "EXTRACOUNT=%i (%i ï¿½s)\n", val, val*WIFI_CMDCOUNT_SLICE);
 			wifiMac.eCount = (u32)val * WIFI_CMDCOUNT_SLICE;
 			break;
 		case REG_WIFI_LISTENINT:

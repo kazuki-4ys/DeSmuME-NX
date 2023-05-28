@@ -193,7 +193,7 @@ NDSError NDS_GetLastError();
 static void NDS_CurrentCPUInfoToNDSError(NDSError &ndsError);
 void emu_halt(EmuHaltReasonCode reasonCode, NDSErrorTag errorTag);
 
-extern u64 nds_timer;
+extern DeSmumeU64 nds_timer;
 void NDS_Reschedule();
 void NDS_RescheduleGXFIFO(u32 cost);
 void NDS_RescheduleDMA();
@@ -222,7 +222,7 @@ struct NDSSystem
 {
 	s32 wifiCycle;
 	s32 cycles;
-	u64 timerCycle[2][4];
+	DeSmumeU64 timerCycle[2][4];
 	u32 VCount;
 	u32 old;
 	u8 overclock;

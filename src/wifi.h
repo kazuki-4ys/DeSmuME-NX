@@ -417,7 +417,7 @@ struct Wifi_TXSlot
 	u16 RegVal;
 
 	u16 CurAddr;
-	int RemPreamble; // preamble time in µs
+	int RemPreamble; // preamble time in ï¿½s
 	int RemHWords;
 	u32 TimeMask; // 3 = 2mbps, 7 = 1mbps
 	bool NotStarted;
@@ -508,11 +508,11 @@ typedef struct
 	u16 retryLimit;
 
 	/* timing */
-	u64 GlobalUsecTimer;
+	DeSmumeU64 GlobalUsecTimer;
 	BOOL crystalEnabled;
-	u64 usec;
+	DeSmumeU64 usec;
 	BOOL usecEnable;
-	u64 ucmp;
+	DeSmumeU64 ucmp;
 	BOOL ucmpEnable;
 	u32 eCount;
 	BOOL eCountEnable;

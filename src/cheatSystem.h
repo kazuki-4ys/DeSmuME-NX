@@ -135,7 +135,7 @@ typedef struct FAT_R4
 {
 	u8	serial[4];
 	u32	CRC;
-	u64 addr;
+	DeSmumeU64 addr;
 } FAT_R4;
 #pragma pack(pop)
 

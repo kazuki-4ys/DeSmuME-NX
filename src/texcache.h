@@ -50,7 +50,7 @@ enum TextureStoreUnpackFormat
 class MemSpan;
 class TextureStore;
 
-typedef u64 TextureCacheKey;
+typedef DeSmumeU64 TextureCacheKey;
 typedef std::map<TextureCacheKey, TextureStore *> TextureCacheMap; // Key = A TextureCacheKey that includes a combination of the texture's NDS texture attributes and palette attributes; Value = Pointer to the texture item
 typedef std::vector<TextureStore *> TextureCacheList;
 //typedef u32 TextureFingerprint;

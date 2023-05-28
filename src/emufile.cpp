@@ -166,26 +166,26 @@ EMUFILE* EMUFILE_MEMORY::memwrap()
 	return this;
 }
 
-size_t EMUFILE::write_64LE(s64 s64valueIn)
+size_t EMUFILE::write_64LE(DeSmumeS64 s64valueIn)
 {
-	return write_64LE(*(u64 *)&s64valueIn);
+	return write_64LE(*(DeSmumeU64 *)&s64valueIn);
 }
 
-size_t EMUFILE::write_64LE(u64 u64valueIn)
+size_t EMUFILE::write_64LE(DeSmumeU64 u64valueIn)
 {
 	u64valueIn = LOCAL_TO_LE_64(u64valueIn);
 	fwrite(&u64valueIn,8);
 	return 8;
 }
 
-size_t EMUFILE::read_64LE(s64 &s64valueOut)
+size_t EMUFILE::read_64LE(DeSmumeS64 &s64valueOut)
 {
-	return read_64LE(*(u64 *)&s64valueOut);
+	return read_64LE(*(DeSmumeU64 *)&s64valueOut);
 }
 
-size_t EMUFILE::read_64LE(u64 &u64valueOut)
+size_t EMUFILE::read_64LE(DeSmumeU64 &u64valueOut)
 {
-	u64 temp = 0;
+	DeSmumeU64 temp = 0;
 	if (fread(&temp,8) != 8)
 		return 0;
 	
@@ -194,16 +194,16 @@ size_t EMUFILE::read_64LE(u64 &u64valueOut)
 	return 1;
 }
 
-s64 EMUFILE::read_s64LE()
+DeSmumeS64 EMUFILE::read_s64LE()
 {
-	s64 value = 0;
+	DeSmumeS64 value = 0;
 	read_64LE(value);
 	return value;
 }
 
-u64 EMUFILE::read_u64LE()
+DeSmumeU64 EMUFILE::read_u64LE()
 {
-	u64 value = 0;
+	DeSmumeU64 value = 0;
 	read_64LE(value);
 	return value;
 }
@@ -317,7 +317,7 @@ size_t EMUFILE::write_doubleLE(double doubleValueIn)
 
 size_t EMUFILE::read_doubleLE(double &doubleValueOut)
 {
-	u64 temp = 0;
+	DeSmumeU64 temp = 0;
 	size_t ret = read_64LE(temp);
 	doubleValueOut = u64_to_double(temp);
 	return ret;

@@ -346,12 +346,12 @@ static void decrypt(u32 *magic, u32 *arg1, u32 *arg2)
 	*arg2 = a ^ magic[1];
 }
 
-static void encrypt(u32 *magic, u64 &cmd)
+static void encrypt(u32 *magic, DeSmumeU64 &cmd)
 {
 	encrypt(magic, (u32 *)&cmd + 1, (u32 *)&cmd + 0);
 }
 
-static void decrypt(u32 *magic, u64 &cmd)
+static void decrypt(u32 *magic, DeSmumeU64 &cmd)
 {
 	decrypt(magic, (u32 *)&cmd + 1, (u32 *)&cmd + 0);
 }

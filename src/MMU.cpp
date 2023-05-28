@@ -58,8 +58,8 @@
 _KEY2 key2;
 
 //http://home.utah.edu/~nahaj/factoring/isqrt.c.html
-static u64 isqrt (u64 x) {
-  u64   squaredbit, remainder, root;
+static DeSmumeU64 isqrt (DeSmumeU64 x) {
+  DeSmumeU64   squaredbit, remainder, root;
 
    if (x<1) return 0;
   
@@ -68,8 +68,8 @@ static u64 isqrt (u64 x) {
     * is even, and the one bit is as far left as is consistant
     * with that condition.)
     */
-   squaredbit  = (u64) ((((u64) ~0LL) >> 1) & 
-                        ~(((u64) ~0LL) >> 2));
+   squaredbit  = (DeSmumeU64) ((((DeSmumeU64) ~0LL) >> 1) & 
+                        ~(((DeSmumeU64) ~0LL) >> 2));
    /* This portable load replaces the loop that used to be 
     * here, and was donated by  legalize@xmission.com 
     */
@@ -1053,7 +1053,7 @@ static void execsqrt() {
 	MMU_new.sqrt.busy = 1;
 
 	if (mode) { 
-		u64 v = T1ReadQuad(MMU.ARM9_REG, 0x2B8);
+		DeSmumeU64 v = T1ReadQuad(MMU.ARM9_REG, 0x2B8);
 		ret = (u32)isqrt(v);
 	} else {
 		u32 v = T1ReadLong(MMU.ARM9_REG, 0x2B8);
@@ -1072,8 +1072,8 @@ static void execsqrt() {
 
 static void execdiv() {
 
-	s64 num,den;
-	s64 res,mod;
+	DeSmumeS64 num,den;
+	DeSmumeS64 res,mod;
 	u8 mode = MMU_new.div.mode;
 	MMU_new.div.busy = 1;
 	MMU_new.div.div0 = 0;
@@ -1081,20 +1081,20 @@ static void execdiv() {
 	switch(mode)
 	{
 	case 0:	// 32/32
-		num = (s64) (s32) T1ReadLong(MMU.ARM9_REG, 0x290);
-		den = (s64) (s32) T1ReadLong(MMU.ARM9_REG, 0x298);
+		num = (DeSmumeS64) (s32) T1ReadLong(MMU.ARM9_REG, 0x290);
+		den = (DeSmumeS64) (s32) T1ReadLong(MMU.ARM9_REG, 0x298);
 		MMU.divCycles = nds_timer + 36;
 		break;
 	case 1:	// 64/32
 	case 3: //gbatek says this is same as mode 1
-		num = (s64) T1ReadQuad(MMU.ARM9_REG, 0x290);
-		den = (s64) (s32) T1ReadLong(MMU.ARM9_REG, 0x298);
+		num = (DeSmumeS64) T1ReadQuad(MMU.ARM9_REG, 0x290);
+		den = (DeSmumeS64) (s32) T1ReadLong(MMU.ARM9_REG, 0x298);
 		MMU.divCycles = nds_timer + 68;
 		break;
 	case 2:	// 64/64
 	default:
-		num = (s64) T1ReadQuad(MMU.ARM9_REG, 0x290);
-		den = (s64) T1ReadQuad(MMU.ARM9_REG, 0x298);
+		num = (DeSmumeS64) T1ReadQuad(MMU.ARM9_REG, 0x290);
+		den = (DeSmumeS64) T1ReadQuad(MMU.ARM9_REG, 0x298);
 		MMU.divCycles = nds_timer + 68;
 		break;
 	}
@@ -1105,7 +1105,7 @@ static void execdiv() {
 		mod = num;
 
 		// the DIV0 flag in DIVCNT is set only if the full 64bit DIV_DENOM value is zero, even in 32bit mode
-		if ((u64)T1ReadQuad(MMU.ARM9_REG, 0x298) == 0) 
+		if ((DeSmumeU64)T1ReadQuad(MMU.ARM9_REG, 0x298) == 0) 
 			MMU_new.div.div0 = 1;
 	}
 	else

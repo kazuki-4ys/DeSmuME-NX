@@ -26,10 +26,7 @@
 #include "sound.h"
 #include "debug.h"
 
-namespace libNX
-{
-	#include <switch.h>
-};
+#include <switch.h>
 
 #define ALIGN_TO(x, a) (((x) + ((a) - 1)) & ~((a) - 1))
 
@@ -59,21 +56,21 @@ SoundInterface_struct SNDSwitch = {
 static bool soundInitialized = 0;
 static bool soundTerminate   = 0;
 
-static libNX::Thread  soundThread;
-static libNX::CondVar soundReady;
-static libNX::Mutex   soundMutex;
+static Thread  soundThread;
+static CondVar soundReady;
+static Mutex   soundMutex;
 
-static libNX::AudioOutBuffer soundOutBuffer[2], *releasedBuffer;
+static AudioOutBuffer soundOutBuffer[2], *releasedBuffer;
 static uint32_t releasedCount;
 
 static void soundTask(void *)
 {
 	while(!soundTerminate)
 	{
-		libNX::condvarWait(&soundReady, &soundMutex);
-		//libNX::condvarWait(&soundReady);
-		libNX::audoutWaitPlayFinish(&releasedBuffer, &releasedCount, U64_MAX);
-		libNX::mutexUnlock(&soundMutex);
+		condvarWait(&soundReady, &soundMutex);
+		//condvarWait(&soundReady);
+		audoutWaitPlayFinish(&releasedBuffer, &releasedCount, 0xFFFFFFFFFFFFFFFFLLU);
+		mutexUnlock(&soundMutex);
 	}
 }
 
@@ -83,11 +80,11 @@ int SNDSwitchInit(int buffersize)
 {
 	if(soundInitialized)
 		return 0;
-	libNX::condvarInit(&soundReady);
-	//libNX::condvarInit(&soundReady, &soundMutex);
+	condvarInit(&soundReady);
+	//condvarInit(&soundReady, &soundMutex);
 
-	libNX::audoutInitialize();
-	libNX::audoutStartAudioOut();
+	audoutInitialize();
+	audoutStartAudioOut();
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -97,14 +94,14 @@ int SNDSwitchInit(int buffersize)
 		soundOutBuffer[i].data_size   = SWITCH_OUTPUT_BUFFER_SIZE;
 		soundOutBuffer[i].data_offset = 0;
 
-		libNX::audoutAppendAudioOutBuffer(&soundOutBuffer[i]);
+		audoutAppendAudioOutBuffer(&soundOutBuffer[i]);
 	}
 
-	libNX::audoutWaitPlayFinish(&releasedBuffer, &releasedCount, U64_MAX);
+	audoutWaitPlayFinish(&releasedBuffer, &releasedCount, 0xFFFFFFFFFFFFFFFFLLU);
 
-	libNX::threadCreate(&soundThread, &soundTask, NULL, 0x1000, 0x20, 3);
+	threadCreate(&soundThread, &soundTask, NULL, nullptr, 0x1000, 0x20, 3);
 
-	libNX::threadStart(&soundThread);
+	threadStart(&soundThread);
 
 	soundInitialized = 1;
 
@@ -122,15 +119,15 @@ void SNDSwitchDeInit()
 
 void SNDSwitchUpdateAudio(s16 *buffer, u32 num_samples)
 {
-	libNX::mutexLock(&soundMutex);
+	mutexLock(&soundMutex);
 
 	memcpy(releasedBuffer->buffer, buffer, num_samples * sizeof(s16));
 	releasedBuffer->buffer_size = num_samples * sizeof(s16);
 	releasedBuffer->data_size   = num_samples * sizeof(s16);
-	libNX::audoutAppendAudioOutBuffer(releasedBuffer);
-	libNX::condvarWakeOne(&soundReady);
+	audoutAppendAudioOutBuffer(releasedBuffer);
+	condvarWakeOne(&soundReady);
 
-	libNX::mutexUnlock(&soundMutex);
+	mutexUnlock(&soundMutex);
 }
 
 //////////////////////////////////////////////////////////////////////////////

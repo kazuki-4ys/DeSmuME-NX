@@ -24,12 +24,11 @@
 #include "input.h"
 #include "NDSSystem.h"
 
-namespace libNX
-{
-	#include <switch.h>
-};
+#include <switch.h>
 
 #define BIT(n) (1U<<(n))
+
+extern PadState pad;
 
  /* Update NDS keypad */
 void update_keypad(u16 keys)
@@ -68,15 +67,19 @@ void update_keypad(u16 keys)
   NDS_endProcessingInput();
 }
 
-libNX::HidControllerKeys keymap[] = {libNX::KEY_A, libNX::KEY_B, libNX::KEY_MINUS, libNX::KEY_PLUS, libNX::KEY_DRIGHT, libNX::KEY_DLEFT, libNX::KEY_DUP, libNX::KEY_DOWN, libNX::KEY_R, libNX::KEY_L, libNX::KEY_X, libNX::KEY_Y };
+//HidControllerKeys keymap[] = {KEY_A, KEY_B, KEY_MINUS, KEY_PLUS, KEY_DRIGHT, KEY_DLEFT, KEY_DUP, KEY_DOWN, KEY_R, KEY_L, KEY_X, KEY_Y };
+unsigned int keymap[] = {HidNpadButton_A, HidNpadButton_B, HidNpadButton_Minus, HidNpadButton_Plus, HidNpadButton_Right, HidNpadButton_Left, HidNpadButton_Up, HidNpadButton_Down, HidNpadButton_R, HidNpadButton_L, HidNpadButton_X, HidNpadButton_Y };
+
 
 /* Manage input events */
 int process_ctrls_events( u16 *keypad )
 {
-	libNX::hidScanInput();
+	//hidScanInput();
 
-	uint32_t kDown = libNX::hidKeysDown(libNX::CONTROLLER_P1_AUTO);
-	uint32_t kUp   = libNX::hidKeysUp(libNX::CONTROLLER_P1_AUTO);
+	//uint32_t kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+  uint32_t kDown = padGetButtonsDown(&pad);
+	//uint32_t kUp   = hidKeysUp(CONTROLLER_P1_AUTO);
+  uint32_t kUp   = padGetButtonsUp(&pad);
 
 	for(int i=0; i < 12; i++)
 	{

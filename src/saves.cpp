@@ -67,7 +67,7 @@ int lastSaveState = 0;		//Keeps track of last savestate used for quick save/load
 
 u32 _DESMUME_version = EMU_DESMUME_VERSION_NUMERIC();
 u32 svn_rev = 0; //EMU_DESMUME_VERSION_NUMERIC(); //sorry, not using this now
-s64 save_time = 0;
+DeSmumeS64 save_time = 0;
 NDS_SLOT1_TYPE slot1Type = NDS_SLOT1_RETAIL_AUTO;
 NDS_SLOT2_TYPE slot2Type = NDS_SLOT2_AUTO;
 
@@ -1099,7 +1099,7 @@ static bool ReadStateChunks(EMUFILE &is, s32 totalsize)
 	bool ret = true;
 	bool haveInfo = false;
 	
-	s64 save_time = 0;
+	DeSmumeS64 save_time = 0;
 	u32 romsize = 0;
 	u8 version_major = 0;
 	u8 version_minor = 0;

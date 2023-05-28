@@ -234,7 +234,7 @@ do {
 
 			/* The factor 2 below avoids cut-off errors for nr_fats == 1.
 			* The "nr_fats*3" is for the reserved first two FAT entries */
-			clust12 = 2*((u64) fatdata *sector_size + bs.fatCount*3) /
+			clust12 = 2*((DeSmumeU64) fatdata *sector_size + bs.fatCount*3) /
 				(2*(int) bs.sectorsPerCluster * sector_size + bs.fatCount*3);
 			fatlength12 = cdiv (((clust12+2) * 3 + 1) >> 1, sector_size);
 			/* Need to recalculate number of clusters, since the unused parts of the
@@ -251,7 +251,7 @@ do {
 					printf( "FAT12: too much clusters\n" );
 			}
 
-			clust16 = ((u64) fatdata *sector_size + bs.fatCount*4) /
+			clust16 = ((DeSmumeU64) fatdata *sector_size + bs.fatCount*4) /
 				((int) bs.sectorsPerCluster * sector_size + bs.fatCount*2);
 			fatlength16 = cdiv ((clust16+2) * 2, sector_size);
 			/* Need to recalculate number of clusters, since the unused parts of the
@@ -276,7 +276,7 @@ do {
 				clust16 = 0;
 			}
 
-			clust32 = ((u64) fatdata *sector_size + bs.fatCount*8) /
+			clust32 = ((DeSmumeU64) fatdata *sector_size + bs.fatCount*8) /
 				((int) bs.sectorsPerCluster * sector_size + bs.fatCount*4);
 			fatlength32 = cdiv ((clust32+2) * 4, sector_size);
 			/* Need to recalculate number of clusters, since the unused parts of the

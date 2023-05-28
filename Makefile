@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	DeSmuME-NX
 BUILD		:=	build
-SOURCES		:=	src src/utils/decrypt src/addons src/utils src/utils/tinyxml src/utils/colorspacehandler src/filter src/metaspu src/switch src/libretro-common/file src/libretro-common/compat/ src/libretro-common/features/
+SOURCES		:=	src src/utils/decrypt src/addons src/utils src/utils/tinyxml src/utils/colorspacehandler src/filter src/metaspu src/switch src/libretro-common/file src/libretro-common/compat/ src/libretro-common/features/ src/opengl
 DATA		:=	data
 INCLUDES	:=	src src/libretro-common/include
 EXEFS_SRC	:=	exefs_src
@@ -57,7 +57,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=  -lSDL2_mixer -lmodplug -lmpg123 -lvorbisidec -logg -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -ljpeg `sdl2-config --libs` `freetype-config --libs` -lnx -lm -lz -lstdc++
+LIBS	:=  -lSDL2_mixer -lmodplug -lmpg123 -lvorbisidec -logg -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -ljpeg `sdl2-config --libs` `freetype-config --libs` -lnx -lm -lz -lstdc++ -lglad -lEGL -lglapi
 #LIBS	:=  -lnx -lm -lz -lstdc++ -lSDL2 -lSDL2_gfx -lSDL2_image -lSDL2_mixer `sdl2-config --libs`
 
 #---------------------------------------------------------------------------------
@@ -141,8 +141,11 @@ SOURCES_CXX +=  armcpu.cpp \
 				switch/main.cpp \
 				switch/input.cpp \
 				switch/sound.cpp \
-				switch/menu.cpp \
-				switch/config.cpp
+				switch/config.cpp \
+				opengl/mesh.cpp \
+				opengl/shader.cpp \
+				opengl/stb_image.cpp \
+				utils.cpp
 
 LIBRETRO_SOURCES += \
 				libretro-common/compat/compat_strl.c \

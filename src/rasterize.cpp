@@ -2222,7 +2222,7 @@ Render3DError SoftRasterizerRenderer::Render(const GFX3D &engine)
 	return error;
 }
 
-Render3DError SoftRasterizerRenderer::EndRender(const u64 frameCount)
+Render3DError SoftRasterizerRenderer::EndRender(const DeSmumeU64 frameCount)
 {
 	// If we're not multithreaded, then just do the post-processing steps now.
 	if (!this->_renderGeometryNeedsFinish)
